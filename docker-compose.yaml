@@ -1,7 +1,7 @@
 services:
   postgres:
     image: postgres:17
-    container_name: file-converter-postgres
+    container_name: pdf-converter-postgres
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-pdf_converter}
       POSTGRES_USER: ${POSTGRES_USER:-pdf_converter}
@@ -170,7 +170,7 @@ services:
       DEBEZIUM_DB_USER: debezium
       DEBEZIUM_PASSWORD: ${DEBEZIUM_PASSWORD:?Set DEBEZIUM_PASSWORD in .env}
       DEBEZIUM_TOPIC_PREFIX: ${DEBEZIUM_TOPIC_PREFIX:-pdf-converter-db}
-      OUTBOX_TOPIC_PREFIX: ${OUTBOX_TOPIC_PREFIX:-pdf-converter}
+      KAFKA_OUTPUT_TOPIC: ${KAFKA_OUTPUT_TOPIC:-converted}
     volumes:
       - ./docker/debezium:/config:ro
     networks:

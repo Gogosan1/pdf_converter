@@ -55,7 +55,7 @@ done
 
 echo "Rendering connector configuration..."
 envsubst \
-  '${DEBEZIUM_DB_HOST} ${DEBEZIUM_DB_PORT} ${DEBEZIUM_DB_USER} ${DEBEZIUM_PASSWORD} ${DEBEZIUM_DB_NAME} ${DEBEZIUM_TOPIC_PREFIX} ${OUTBOX_TOPIC_PREFIX}' \
+  '${DEBEZIUM_DB_HOST} ${DEBEZIUM_DB_PORT} ${DEBEZIUM_DB_USER} ${DEBEZIUM_PASSWORD} ${DEBEZIUM_DB_NAME} ${DEBEZIUM_TOPIC_PREFIX} ${KAFKA_OUTPUT_TOPIC}' \
   < /config/connector-config.json.template \
   > /tmp/connector-config.json
 

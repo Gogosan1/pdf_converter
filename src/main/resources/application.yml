@@ -29,14 +29,15 @@ spring:
 
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:29092}
-    input-topic: ${KAFKA_INPUT_TOPIC:files-uploaded}
+    input-topic: ${KAFKA_INPUT_TOPIC:converted}
+    output-topic: ${KAFKA_OUTPUT_TOPIC:to-convert}
 
     listener:
       ack-mode: record
 
     consumer:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.JacksonJsonDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
 
       group-id: files-converter
       enable-auto-commit: false # false because we are using inbox pattern

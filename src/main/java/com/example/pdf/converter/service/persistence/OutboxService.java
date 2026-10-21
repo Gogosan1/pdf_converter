@@ -31,7 +31,7 @@ public class OutboxService {
                 null
         );
 
-        save(eventId, event, "FileConverted");
+        save(eventId, event, SagaStatus.SUCCESS.name());
     }
 
     @Transactional
@@ -43,14 +43,14 @@ public class OutboxService {
                 exception.getErrorCode().name(),
                 exception.getPublicMessage());
 
-        save(eventId, event, "FileConversionFailed");
+        save(eventId, event, SagaStatus.FAILURE.name());
     }
 
     private void save(UUID eventId, FileConvertedEvent event, String eventType) {
         Outbox outbox = new Outbox();
 
         outbox.setId(UUID.randomUUID());
-        outbox.setAggregateType("file-conversion");
+        outbox.setAggregateType("file-converted");
         outbox.setAggregateId(eventId.toString());
         outbox.setEventType(eventType);
         outbox.setPayload(jsonMapper.writeValueAsString(event));
