@@ -1,11 +1,11 @@
 spring:
   application:
-    name: file-converter
+    name: pdf-converter
 
   datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:file_converter}
-    username: ${DB_USER:file_converter}
-    password: ${DB_PASSWORD:file_converter}
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:pdf_converter}
+    username: ${DB_USER:pdf_converter}
+    password: ${DB_PASSWORD:pdf_converter}
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -29,14 +29,15 @@ spring:
 
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:29092}
-    input-topic: ${KAFKA_INPUT_TOPIC:files-uploaded}
+    input-topic: ${KAFKA_INPUT_TOPIC:converted}
+    output-topic: ${KAFKA_OUTPUT_TOPIC:to-convert}
 
     listener:
       ack-mode: record
 
     consumer:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.JacksonJsonDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
 
       group-id: files-converter
       enable-auto-commit: false # false because we are using inbox pattern
@@ -47,6 +48,10 @@ spring:
         "[spring.json.trusted.packages]": "com.example.pdf.converter.event"
         "[spring.json.use.type.headers]": false
 
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_ENDPOINT:http://localhost:8761/eureka}
 
 minio:
   endpoint: ${MINIO_ENDPOINT:http://localhost:9000}

@@ -31,8 +31,8 @@ public class DocumentManagementFacade {
 
         validateEvent(event);
 
-        if (!persistenceService.tryRegisterInInbox(event.id())) {
-            log.warn("Событие: {} с таким ID:{} уже есть!", event, event.id());
+        if (!persistenceService.tryRegisterInInbox(event.eventId())) {
+            log.warn("Событие: {} с таким ID:{} уже есть!", event, event.eventId());
             return;
         }
 
@@ -52,20 +52,20 @@ public class DocumentManagementFacade {
             storage.upload(outputTempFile, resultObjectKey, conversionResultMetadata.contentType());
             log.info("Конвертированный файл: {} успешно загрузился в S3", resultObjectKey);
 
-            persistenceService.success(event.id(), resultObjectKey);
+            persistenceService.success(event.eventId(), resultObjectKey);
 
         } catch (PermanentProcessingException exception) {
             log.error("Критическая ошибка обработки файла: {}", exception.getPublicMessage());
-            persistenceService.markAsPermanentFailure(event.id(), exception);
+            persistenceService.markAsPermanentFailure(event.eventId(), exception);
 
         } catch (RetryableProcessingException exception) {
             log.warn("Временная ошибка. Будет выполнен ретрай: {}", exception.getMessage());
-            persistenceService.releaseForRetry(event.id());
+            persistenceService.releaseForRetry(event.eventId());
             throw exception;
 
         } catch (Exception exception) {
             log.error("Непредвиденная ошибка при обработке файла; требуется повторная попытка", exception);
-            persistenceService.releaseForRetry(event.id());
+            persistenceService.releaseForRetry(event.eventId());
             throw new  RetryableProcessingException(
                     ProcessingErrorCode.INTERNAL_ERROR,
                     "Внутренняя ошибка при обработке файла; требуется повторная попытка",
@@ -82,8 +82,8 @@ public class DocumentManagementFacade {
         if (event == null) {
             throw new InvalidInputEventException("Kafka-событие не должно быть null");
         }
-        if (event.id() == null) {
-            throw new InvalidInputEventException("В Kafka-событии отсутствует id");
+        if (event.eventId() == null) {
+            throw new InvalidInputEventException("В Kafka-событии отсутствует eventId");
         }
 
         if (event.pathToFile() == null || event.pathToFile().isBlank()) {
